@@ -4,6 +4,7 @@ package node
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -81,7 +82,7 @@ func (n *Node) handlerFuncAddSubscription(w http.ResponseWriter, r *http.Request
 	var body struct {
 		TxHash string `json:"tx_hash"`
 	}
-
+	fmt.Println("req bodyyyyyyy", r.Body)
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		utils.WriteErrorToResponse(w, 400, &types.StdError{
 			Message: "Error occurred while decoding the response body",
@@ -90,6 +91,7 @@ func (n *Node) handlerFuncAddSubscription(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	fmt.Println("Bodyyyy",body)
 	sub, err := n.tx.QuerySubscriptionByTxHash(body.TxHash)
 	if err != nil {
 		utils.WriteErrorToResponse(w, 500, &types.StdError{
@@ -98,6 +100,8 @@ func (n *Node) handlerFuncAddSubscription(w http.ResponseWriter, r *http.Request
 		})
 		return
 	}
+
+	fmt.Println("subbbbbbbbbb",sub)
 	if sub.Status != vpn.StatusActive {
 		utils.WriteErrorToResponse(w, 400, &types.StdError{
 			Message: "Invalid subscription status found on the chain",
@@ -162,7 +166,7 @@ func (n *Node) handlerFuncAddSubscription(w http.ResponseWriter, r *http.Request
 		})
 		return
 	}
-
+	fmt.Println("DONEEEEEE")
 	utils.WriteResultToResponse(w, 201, _sub)
 }
 
